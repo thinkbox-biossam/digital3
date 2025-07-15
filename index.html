@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H̸W̸A̸B̸O̸N̸G̸_̸M̸E̸L̸T̸D̸O̸W̸N̸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;900&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #000000;
+            color: #ff0000;
+            overflow: hidden;
+            cursor: none;
+        }
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .post {
+            position: absolute;
+            background-color: rgba(10, 0, 0, 0.85);
+            border: 1px solid #ff0000;
+            padding: 10px 15px;
+            box-shadow: 0 0 15px #ff0000;
+            opacity: 0;
+            backdrop-filter: blur(2px);
+            max-width: 350px;
+            /* animation property will be set by JS */
+        }
+        .post-header {
+            font-weight: 900;
+            font-size: 0.8rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .post-header .icon {
+            width: 15px;
+            height: 15px;
+            background: #ff0000;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .post-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+        #warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            background: black;
+            padding: 2rem;
+            border: 1px solid white;
+            z-index: 1002;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        #warning button {
+            background: white;
+            color: black;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .glitch-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(https://www.transparenttextures.com/patterns/subtle-noise.png);
+            opacity: 0.1;
+            animation: glitch-anim 0.5s infinite;
+            z-index: 999;
+            pointer-events: none;
+        }
+        #cursor-dot {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            position: fixed;
+            z-index: 1003;
+            pointer-events: none;
+            box-shadow: 0 0 10px red;
+            transition: transform 0.1s ease-out;
+            display: none; /* Hide by default */
+        }
+        /* Show cursor only on devices with a mouse */
+        @media (pointer: fine) {
+            #cursor-dot {
+                display: block;
+            }
+        }
+        .fixed-post {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            border-color: #00ffff;
+            box-shadow: 0 0 25px #00ffff;
+            animation: hover-anim 3s infinite ease-in-out, fadeIn 1s forwards;
+            width: 90%;
+            max-width: 400px;
+        }
+        #prompt-text {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            width: 90%;
+            transform: translateX(-50%);
+            color: #00ff00;
+            font-size: 1rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+            z-index: 1000;
+            text-align: center;
+            animation: fadeIn 2s 1s forwards; /* 1s delay */
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 640px) {
+            .post {
+                padding: 8px 12px;
+            }
+            .post-header {
+                font-size: 0.75rem;
+            }
+            .post-content {
+                font-size: 0.85rem;
+            }
+            #prompt-text {
+                font-size: 0.9rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: rotate(var(--rotation, 0deg)) scale(1); }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: rotate(var(--rotation, 0deg)) scale(0.9); }
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(5px, -5px); }
+            60% { transform: translate(-5px, -5px); }
+            80% { transform: translate(5px, 5px); }
+            100% { transform: translate(0, 0); }
+        }
+        .glitch-text {
+            animation: glitch-text-anim 1.5s infinite steps(1);
+        }
+        @keyframes glitch-text-anim {
+            0% { text-shadow: -2px -2px 0 #00ffff, 2px 2px 0 #ff00ff; }
+            25% { text-shadow: 2px 2px 0 #00ffff, -2px -2px 0 #ff00ff; }
+            50% { text-shadow: 2px -2px 0 #00ffff, -2px 2px 0 #ff00ff; }
+            75% { text-shadow: -2px 2px 0 #00ffff, 2px -2px 0 #ff00ff; }
+            100% { text-shadow: -2px -2px 0 #00ffff, 2px 2px 0 #ff00ff; }
+        }
+        @keyframes hover-anim {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="warning">
+        <h2 class="text-xl font-bold mb-2">경고 / WARNING</h2>
+        <p>이 페이지는 의도적으로 불안감을 유발하는<br>시각 효과와 내용을 포함하고 있습니다.<br>계속하시겠습니까?</p>
+        <button id="start-button">시작</button>
+    </div>
+
+    <div id="container" style="display: none;">
+        <div class="glitch-layer"></div>
+    </div>
+    <div id="cursor-dot"></div>
+    <div id="ip-leak-popup" class="post fixed-post" style="display: none;"></div>
+    <div id="prompt-text" style="display: none;">학교 아이피를 알 수 있는 곳이 어딜까... 전산실..? 전산실로 가서 3333을 입력하자.</div>
+
+    <script>
+        const startButton = document.getElementById('start-button');
+        const warningContainer = document.getElementById('warning');
+        const mainContainer = document.getElementById('container');
+        const cursorDot = document.getElementById('cursor-dot');
+        const ipLeakPopup = document.getElementById('ip-leak-popup');
+        const promptText = document.getElementById('prompt-text');
+
+        const posts = [
+            "3학년 2반 OOO, 작년에 너 학폭위 열릴 뻔한 거 내가 막아준 거 기억하지? 이제 갚아야지.",
+            "체육 창고에서 담배 피우는 거 너네 맞지? 다음엔 동영상으로 찍어줄게.",
+            "1학년 최XX, 돈 빌려가서 안 갚는다는 제보가 한두 개가 아니네. 공개적으로 망신 당해볼래?",
+            "미술실에서 너네 둘이 뭐 했는지 CCTV 돌려볼까? ㅋ",
+            "다음 타겟은 누구?",
+            "이 중에 진짜는 뭘까? 가짜는 뭘까? 멍청하긴 ㅋㅋㅋ",
+            "죽고싶다",
+            "왜 나만 갖고 그래",
+            "선생님도 이거 보고 있는 거 다 알아.",
+            "OOO 걔 영상 아직도 가지고 있는 사람? 교환 원함.",
+            "다들 똑같아. 역겨워.",
+            "이 페이지 없애려고 해봐. 더 재밌는 거 터뜨려줄게.",
+            "너네 집 어디 사는지 다 안다. 조심해라.",
+            "OOO 쌤 편애하는 거 역겨움. 불공평해.",
+            "솔직히 우리 학교 축제 제일 재미없음.",
+            "누가 내 신발 숨겼냐? 걸리면 뒤진다.",
+            "다 필요 없고 그냥 다 망했으면 좋겠다.",
+            "페이지 관리자 누구냐? 한 번 만나자.",
+            "속보) 2학년 커플 또 깨짐 ㅋㅋㅋ",
+            "급식 맛없다고 한 놈 나와라. 난 맛있는데?",
+            "수행평가 조별과제 나 혼자 다 함. OOO, XXX 이름 뺀다.",
+            "나만 힘든 거 아니지? 다들 그렇다고 해줘.",
+            "어제 OOO랑 XXX랑 손잡고 가는 거 봄. 사귀나?",
+            "체육복 잃어버린 사람? 내가 갖고 있는데 ㅋㅋ",
+            "이딴 글 올리는 애들이나 믿는 애들이나 똑같음.",
+            "관리자님, 제보 하나만 할게요. 비밀인데...",
+            "결국 이렇게 될 줄 알았어. 다 끝이야."
+        ];
+
+        function createPost() {
+            const postEl = document.createElement('div');
+            postEl.className = 'post';
+
+            const content = posts[Math.floor(Math.random() * posts.length)];
+            
+            postEl.innerHTML = `
+                <div class="post-header">
+                    <span class="icon"></span>
+                    <span class="glitch-text">익명의 제보</span>
+                </div>
+                <p class="post-content">${content}</p>
+            `;
+
+            const maxWidth = window.innerWidth > 400 ? 350 : window.innerWidth * 0.85;
+            postEl.style.maxWidth = `${maxWidth}px`;
+            postEl.style.left = `${Math.random() * (window.innerWidth - maxWidth)}px`;
+            postEl.style.top = `${Math.random() * (window.innerHeight - 150)}px`;
+            
+            const rotation = Math.random() * 10 - 5;
+            postEl.style.setProperty('--rotation', `${rotation}deg`);
+            postEl.style.transform = `rotate(${rotation}deg) scale(0.9)`;
+
+            const fadeInDuration = Math.random() * 0.4 + 0.2;
+            postEl.style.animation = `fadeIn ${fadeInDuration}s forwards`;
+            
+            if (Math.random() > 0.85) {
+                postEl.style.fontSize = '1.1rem';
+                postEl.style.borderColor = '#ffffff';
+                postEl.style.boxShadow = '0 0 25px #ffffff';
+                postEl.querySelector('.post-content').style.color = '#ffffff';
+            }
+
+            mainContainer.appendChild(postEl);
+
+            if (Math.random() > 0.6) {
+                const lifeTime = Math.random() * 3000 + 2000;
+                setTimeout(() => {
+                    postEl.style.animation = `fadeOut 1s forwards`;
+                    setTimeout(() => {
+                        if(postEl.parentElement) {
+                           postEl.remove();
+                        }
+                    }, 1000);
+                }, lifeTime);
+            }
+
+            // Reduced max posts for mobile performance
+            if (mainContainer.children.length > 30) {
+                mainContainer.removeChild(mainContainer.children[1]);
+            }
+        }
+        
+        startButton.addEventListener('click', () => {
+            warningContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            const postInterval = setInterval(createPost, 400);
+
+            // Show the IP leak popup after a delay
+            setTimeout(() => {
+                ipLeakPopup.style.display = 'block';
+                ipLeakPopup.innerHTML = `
+                    <div class="post-header" style="color: #00ffff;">
+                        <span class="icon" style="background: #00ffff;"></span>
+                        <span class="glitch-text">익명의 제보</span>
+                    </div>
+                    <p class="post-content" style="color: #00ffff; font-weight: bold;">
+                        야 OOO 쌤 진짜 미친거 아니냐?
+                        <br>
+                        (IP: 211.48.0.15)
+                    </p>
+                `;
+                promptText.style.display = 'block';
+            }, 8000); // Show after 8 seconds
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = (e.clientX - 5) + 'px';
+            cursorDot.style.top = (e.clientY - 5) + 'px';
+        });
+
+        document.addEventListener('mousedown', () => {
+             cursorDot.style.transform = 'scale(2)';
+        });
+         document.addEventListener('mouseup', () => {
+             cursorDot.style.transform = 'scale(1)';
+        });
+
+    </script>
+</body>
+</html>
